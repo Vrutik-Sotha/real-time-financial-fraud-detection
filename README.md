@@ -1,198 +1,263 @@
-# Real-Time Financial Fraud Detection Platform 🛡️💳
+# Real-Time Financial Fraud Detection System
 
-An enterprise-grade, explainable Machine Learning application designed to detect fraudulent financial transactions using **human-readable transaction attributes** (Amount, Merchant Category, Geographic Distance, Timestamp, Cardholder Age, and Population).
+A Machine Learning-based financial fraud detection application built using Python and Streamlit. The system analyzes transaction attributes, predicts potentially fraudulent transactions, monitors incoming transactions through batch processing and simulation, and maintains prediction and model-training records using SQLite.
 
-Built with **Python**, **Scikit-learn**, **XGBoost**, **Pandas**, **SQLite**, and **Streamlit**.
+## Project Overview
 
----
+Financial fraud detection is an important challenge in digital banking and online payment systems. This project demonstrates how machine learning can help identify suspicious financial transactions by analyzing transaction-related features.
 
-## 📌 Project Architecture & Structure
+The application provides an interactive dashboard where users can:
 
-For a full technical deep dive and Mermaid sequence/dataflow diagrams, see [PROJECT_ARCHITECTURE.md](file:///c:/Users/vrutik/OneDrive/Desktop/web%20development/Real-Time%20Financial%20Fraud%20Detection%20System/PROJECT_ARCHITECTURE.md).
+- Predict whether an individual transaction is potentially fraudulent.
+- Upload CSV files to analyze multiple transactions.
+- Simulate incoming transactions for continuous monitoring.
+- Compare the performance of multiple machine learning algorithms.
+- Track transaction history and model-training activity.
+- Register datasets for reuse during model retraining.
+- Switch between available trained models.
+
+**Note:** This is an academic machine learning project. The live monitoring functionality uses simulated transactions and CSV uploads. It is not directly connected to real banking systems, payment gateways, or financial institutions.
+
+## Key Features
+
+### 1. Dashboard
+- Displays transaction statistics and prediction summaries.
+- Shows fraudulent and legitimate transaction distributions.
+- Displays recent transaction activity.
+- Provides an overview of system activity.
+
+### 2. Model Performance
+- Compares multiple machine learning algorithms.
+- Displays accuracy, precision, recall, F1-score, ROC-AUC, and PR-AUC.
+- Provides confusion matrices and performance visualizations.
+- Helps evaluate the strengths and weaknesses of different models.
+
+### 3. Transaction Prediction
+- Accepts individual transaction details through a manual input form.
+- Processes transaction attributes using the trained preprocessing pipeline.
+- Predicts whether a transaction is potentially fraudulent or legitimate.
+- Displays prediction probability and risk classification.
+- Saves prediction records in the SQLite database.
+
+### 4. Live Transaction Monitoring
+- Supports bulk transaction analysis through CSV uploads.
+- Processes multiple transactions using the trained model.
+- Provides a simulated live transaction feed.
+- Records predictions for monitoring and analysis.
+
+### 5. Dataset Management and Retraining
+- Maintains a persistent dataset registry.
+- Allows registered datasets to be reused after application restarts.
+- Supports model training and comparison using available labelled datasets.
+- Supports switching between trained machine learning models.
+- Includes model backup and rollback functionality.
+
+Predictions are stored separately from training datasets. New predictions do not automatically become training data.
+
+## Machine Learning Algorithms
+
+The project implements and compares three classification algorithms:
+
+| Algorithm | Description |
+|---|---|
+| Logistic Regression | Classification model used as a baseline, with class weighting to address class imbalance. |
+| Random Forest | Ensemble learning algorithm that combines multiple decision trees. |
+| XGBoost | Gradient boosting algorithm used for classification. |
+
+The application uses model evaluation results to identify a candidate model for prediction.
+
+## Dataset Information
+
+The project is designed to support the transaction schema associated with the [Kartik2112 Credit Card Fraud Detection dataset](https://www.kaggle.com/datasets/kartik2112/fraud-detection).
+
+### Dataset authenticity and current benchmark
+
+The current repository version uses a locally generated benchmark dataset containing:
+
+- `fraudTrain.csv` – 4,000 generated training records.
+- `fraudTest.csv` – 1,000 generated test records.
+
+**These files are generated benchmark data, not the original full Kaggle dataset.**
+
+The application is designed around compatible transaction fields and can be used with the original dataset after obtaining and validating the actual files.
+
+### Features used for prediction
+
+The model uses eight engineered or selected features:
+
+| Feature | Description |
+|---|---|
+| `amt` | Transaction amount |
+| `hour` | Transaction hour |
+| `day_of_week` | Day of the week |
+| `is_weekend` | Indicates whether the transaction occurred on a weekend |
+| `distance_km` | Distance between customer and merchant locations |
+| `city_pop` | Population of the customer's city |
+| `age` | Customer age |
+| `category` | Transaction category |
+
+Personally identifying fields and transaction identifiers are excluded from model training.
+
+### Data preprocessing
+
+The preprocessing pipeline includes:
+
+- Feature engineering from transaction attributes.
+- Calculation of geographical distance using the Haversine formula.
+- Numerical feature scaling using `StandardScaler`.
+- Categorical feature encoding using `OneHotEncoder`.
+- A consistent preprocessing pipeline for training and prediction.
+
+## Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Core programming language |
+| Streamlit | Interactive web application |
+| Pandas | Data manipulation |
+| NumPy | Numerical computations |
+| Scikit-learn | Machine learning and preprocessing |
+| XGBoost | Gradient boosting classification |
+| SQLite | Persistent database storage |
+| Joblib | Model serialization |
+| Matplotlib | Data visualization |
+| Seaborn | Statistical visualization |
+
+## Project Structure
 
 ```text
 Real-Time Financial Fraud Detection System/
 │
-├── app.py                     # Streamlit 4-page FinTech web application
-├── model.py                   # Multi-model benchmarking (LR, RF, XGBoost), switching & backups
-├── preprocessing.py           # Feature engineering, Haversine formula, and ColumnTransformer pipeline
-├── database.py                # SQLite persistence (transaction_history, training_history, dataset_registry)
-├── train.py                   # Model training and comparison CLI script
-├── test_pipeline.py           # Comprehensive 15-module automated test suite
-├── requirements.txt           # Project dependencies (Scikit-learn, XGBoost, Streamlit, etc.)
-├── PROJECT_ARCHITECTURE.md    # Detailed architecture specifications and Mermaid diagrams
-├── README.md                  # Complete documentation and interview preparation guide
+├── app.py
+├── model.py
+├── preprocessing.py
+├── database.py
+├── train.py
+├── test_pipeline.py
+│
+├── utils/
+│   └── visualization.py
 │
 ├── data/
-│   ├── fraudTrain.csv         # Baseline training dataset (Kartik2112 schema)
-│   ├── fraudTest.csv          # Held-out evaluation dataset
-│   ├── registered_datasets/   # Persistent storage for newly registered datasets
-│   └── monitoring.db          # Persistent SQLite audit database
+│   └── Generated or downloaded datasets
 │
-└── models/
-    ├── fraud_model.pkl        # Active champion model & candidate bundle
-    └── fraud_model_backup.pkl # Safety rollback copy of previous working model
+├── models/
+│   └── Saved model artifacts
+│
+├── PROJECT_ARCHITECTURE.md
+├── README.md
+└── requirements.txt
 ```
 
----
+**Note:** Dataset files, local database files, trained model artifacts, and virtual environments are excluded from the GitHub repository through `.gitignore`.
 
-## 🛠️ Technology Stack
+## Installation and Setup
 
-- **Language:** Python 3.9+
-- **Data Manipulation:** Pandas, NumPy
-- **Machine Learning & Ensembles:** Scikit-learn (Logistic Regression, Random Forest), XGBoost
-- **Persistent Storage:** SQLite (`sqlite3`) with zero-configuration persistence
-- **Data Visualization:** Matplotlib, Seaborn
-- **Interactive UI:** Streamlit with custom FinTech CSS styling
-- **Model Serialization:** Joblib
+### Prerequisites
 
----
+- Python 3.10 or later (use a version compatible with the dependencies).
+- Git.
+- pip package manager.
 
-## 📥 Dataset Setup: Kartik2112 Credit Card Fraud Detection
+### Step 1: Clone the repository
 
-This application is built for the **Kaggle: Credit Card Fraud Detection by Kartik2112** dataset:
-🔗 [Kaggle Fraud Detection Dataset](https://www.kaggle.com/datasets/kartik2112/fraud-detection)
+```bash
+git clone https://github.com/YOUR-USERNAME/real-time-financial-fraud-detection.git
+```
 
-### Raw Dataset Attributes:
-`trans_date_trans_time`, `cc_num`, `merchant`, `category`, `amt`, `first`, `last`, `gender`, `street`, `city`, `state`, `zip`, `lat`, `long`, `city_pop`, `job`, `dob`, `trans_num`, `unix_time`, `merch_lat`, `merch_long`, `is_fraud`.
+### Step 2: Navigate to the project directory
 
-### Setup Instructions:
-1. Download `fraudTrain.csv` and `fraudTest.csv` from Kaggle.
-2. Place both files inside the `data/` directory:
-   ```text
-   data/fraudTrain.csv
-   data/fraudTest.csv
-   ```
-3. *Note:* If the files are not yet downloaded, the system automatically initializes a benchmark sample dataset with the exact Kartik2112 schema so the application and test suite run immediately out-of-the-box.
-4. *Privacy Notice:* The dataset is generated using the Sparkov synthetic generator. This ensures realistic consumer behavior while adhering to data privacy standards (no real bank customer PII is used).
+```bash
+cd real-time-financial-fraud-detection
+```
 
----
+### Step 3: Create a virtual environment
 
-## 🔍 Feature Engineering & Preprocessing Pipeline
+```bash
+python -m venv venv
+```
 
-To eliminate black-box PCA coordinates and ensure genuine manual transaction input, raw transaction records are transformed into 8 human-interpretable features:
+Activate it:
 
-| Feature Name | Type | Description | Extraction / Engineering Logic |
-| :--- | :--- | :--- | :--- |
-| **`amt`** | Numerical | Transaction dollar amount | Direct input |
-| **`category`** | Categorical | Merchant business category | One-hot encoded across 14 standard categories |
-| **`hour`** | Numerical | Hour of day (0–23) | Extracted from `trans_date_trans_time` |
-| **`day_of_week`** | Numerical | Day of week (0=Mon, 6=Sun) | Extracted from `trans_date_trans_time` |
-| **`is_weekend`** | Binary | Weekend indicator (0 or 1) | 1 if day of week is Saturday or Sunday |
-| **`distance_km`** | Numerical | Customer-to-Merchant distance | Computed using vectorized **Haversine formula** from `(lat, long)` to `(merch_lat, merch_long)` |
-| **`city_pop`** | Numerical | Customer city population | Direct demographic indicator |
-| **`age`** | Numerical | Cardholder age | Transaction year minus birth year (`dob`) |
+**Windows:**
+```bash
+venv\Scripts\activate
+```
 
-### Data Leakage Prevention:
-`ColumnTransformer` standardizes numerical features with `StandardScaler` and encodes `category` with `OneHotEncoder(handle_unknown='ignore')`. The transformer is **fitted strictly on the training set** (`fraudTrain.csv`) and only transforms test or incoming manual records.
+**Linux / macOS:**
+```bash
+source venv/bin/activate
+```
 
----
+### Step 4: Install dependencies
 
-## ⚔️ Multi-Model Benchmarking & Dynamic Switching
-
-The training pipeline trains and compares three distinct classifiers:
-1. **Logistic Regression:** Linear decision boundary with balanced class weighting:
-   $$w_j = \frac{N}{2 \times N_j}$$
-2. **Random Forest:** Bagging ensemble of 100 decision trees with balanced sub-sampling (`class_weight='balanced'`).
-3. **XGBoost:** Extreme Gradient Boosted Trees with scale-position weighting (`scale_pos_weight`):
-   $$\text{scale\_pos\_weight} = \frac{N_{\text{legitimate}}}{N_{\text{fraud}}}$$
-
-### 🔄 Dynamic Champion Model Switching:
-The candidate models are all stored within the serialized bundle. In the sidebar, users can switch between **Logistic Regression**, **Random Forest**, and **XGBoost** via a dropdown. The active model immediately performs subsequent inferences **without requiring retraining or server restart**.
-
----
-
-## 🚀 Execution Instructions
-
-### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. (Optional) Run Initial Training CLI
-```bash
-python train.py
-```
+### Step 5: Run the application
 
-### 3. Launch the Streamlit Web Application
 ```bash
 streamlit run app.py
 ```
-Access the dashboard at `http://localhost:8501`.
 
-### 4. Run the Full Test Suite
-```bash
-python test_pipeline.py
+The application will open in your browser, generally at:
+
+```text
+http://localhost:8501
 ```
-Runs the 15-module end-to-end verification suite.
 
----
+Follow the application's dataset initialization instructions if it needs benchmark data or a downloaded dataset.
 
-## 🖥️ Four-Page Application Walkthrough
+## Database and Persistence
 
-### Page 1: 📊 Dashboard
-- **KPI Metrics:** Total Training Records, Dataset Fraud Count, Fraud Percentage, Lifetime Monitored Transactions (queried live from SQLite).
-- **Visuals:** Class distribution donut chart, Kartik2112 architecture overview, administrative system status card, and recent persistent audit snapshot.
+The project uses SQLite to maintain application records, including:
 
-### Page 2: 📈 Model Performance & Comparison
-- **Benchmark Table:** Side-by-side comparison of Logistic Regression, Random Forest, and XGBoost across Accuracy, Precision, Recall, F1-Score, ROC-AUC, and PR-AUC.
-- **Diagnostic Plots:** Confusion Matrix heatmap, ROC Curve, and Precision-Recall Curve on the held-out test dataset (`fraudTest.csv`).
-- **Interview Explainer:** Concise educational breakdown on why PR-AUC and F1-score outperform Accuracy on imbalanced datasets.
+- Transaction prediction history.
+- Model training history.
+- Registered dataset information.
 
-### Page 3: 🔍 Transaction Prediction (Genuine Manual Input)
-- Clean, human-readable input form:
-  - Transaction Amount ($ USD)
-  - Transaction Date & Time (Date & Time pickers)
-  - Merchant Category (Dropdown of 14 categories)
-  - Customer-to-Merchant Distance (km)
-  - Customer City Population
-  - Cardholder Age
-- Quick demo scenario buttons (*Everyday Grocery Store ($34.20)* vs. *High-Value Online Anomaly ($1,850.00)*).
-- Instant prediction with FinTech alert banners (`FRAUDULENT` / `LEGITIMATE`), probability progress gauge, and tiered risk classification.
-- Automatically logged to SQLite audit trail.
+This allows the application to retain relevant records across application restarts.
 
-### Page 4: 📡 Live Transaction Monitoring (Bulk & Continuous Ingestion)
-- **Two Flexible Ingestion Modes:**
-  - **Mode A: Bulk CSV Batch Processing:**
-    - Downloadable sample CSV template (`sample_transactions_template.csv`).
-    - Multi-record CSV batch upload with schema validation (`amt`, `category`, `trans_date_trans_time`, `distance_km`, `city_pop`, `age`).
-    - Valid vs. invalid row detection and 5-row preview.
-    - Vectorized model inference with live progress indicator.
-    - Detailed prediction results table and one-click batch CSV export.
-  - **Mode B: Continuous Live Stream Simulator:**
-    - Configurable transaction count (5 to 100) and streaming pacing interval (0.05s to 1.5s).
-    - Scenario stream profiles (*Normal Consumer Stream*, *High-Risk Anomaly Surge*, *Balanced Mixed Stream*).
-    - Instant live streaming inference, real-time alert cards, and immediate individual SQLite persistence.
-- **Common Unified Monitoring Dashboard:**
-  - Real-time lifetime KPIs from SQLite: Total Analyzed, Flagged Fraudulent, Legitimate Cleared, High-Risk Alerts, Fraud Detection Rate, and Average Fraud Risk.
-  - 4 diagnostic charts: Monitoring outcomes bar chart, cumulative activity time-series (`plot_transactions_over_time`), fraud probability distribution histogram, and ingestion source breakdown.
-  - Filterable SQLite audit table (filter by Prediction, Risk Tier, Source, or Search Query).
-  - One-click export of filtered audit logs to CSV and database reset controls.
+## Testing
 
-### Sidebar: Persistent Dataset Management & Model Controls
-- **Active Model Switching:** Dynamic dropdown to select champion algorithm.
-- **Persistent Dataset Registry:** Displays the currently registered training dataset, total records, fraud rate, and registration timestamp.
-- **Retrain on Registered Dataset:** Retrain directly on the registered dataset without re-uploading every session.
-- **Replace / Register Dataset:** Upload new CSV, automatically validated, stored in `data/registered_datasets/`, and registered in SQLite.
-- **Model Backup & Rollback:** Automatically backs up working models to `models/fraud_model_backup.pkl` with a **"Restore Previous Model Backup"** rollback button.
+The project includes an automated test suite in `test_pipeline.py`.
 
----
+Run the tests using:
 
-## 🎓 Technical Interview & Placement Guide
+```bash
+pytest test_pipeline.py -v
+```
 
-### 1. Why replace anonymized PCA features with human-readable attributes?
-Real-world fraud investigators and banking interfaces require interpretable transaction variables (e.g. "Amount was $2,500 at 3:00 AM from a merchant 800 km away") to comply with Adverse Action Notice requirements. The Kartik2112 dataset enables genuine manual transaction input without losing statistical anomaly patterns.
+The tests are intended to validate application components and the machine learning workflow. Passing automated tests does not independently establish real-world model accuracy or production readiness.
 
-### 2. How is Customer-to-Merchant Distance calculated?
-We apply the **Haversine formula**, which computes great-circle distance over the Earth's spherical surface using customer `(lat, long)` and merchant `(merch_lat, merch_long)` coordinates:
-$$a = \sin^2\left(\frac{\Delta \phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta \lambda}{2}\right), \quad d = 2 R \arcsin(\sqrt{a})$$
-In credit card fraud, extreme distances (e.g. cross-border or out-of-state Card-Not-Present purchases) correlate strongly with compromise.
+## Important Limitations
 
-### 3. Why are PR-AUC and F1-Score superior to Accuracy and ROC-AUC here?
-In datasets where fraud is ~1%, a model predicting 100% legitimate transactions achieves 99% accuracy but zero fraud detection. ROC-AUC can remain overly optimistic when negative instances dominate. **Precision-Recall AUC (PR-AUC)** focuses specifically on the minority positive class.
+- The currently available benchmark dataset is synthetically generated.
+- Performance on generated data should not be interpreted as real-world fraud detection performance.
+- Real banking or payment gateway integration is not implemented.
+- Live monitoring currently relies on simulation and uploaded CSV data.
+- Model performance depends on dataset quality, class distribution, and validation methodology.
+- The application is an academic demonstration and is not intended for production financial decisions.
 
-### 4. How is data leakage prevented during retraining?
-The `ColumnTransformer` is fitted solely on the training partition. Feature statistics (mean, variance, category dictionaries) are computed from training data and serialized into the model bundle with Joblib. Test data and live incoming transactions are only transformed using these frozen statistics.
+## Future Enhancements
 
-### 5. Why use SQLite for monitoring history?
-SQLite provides a zero-configuration, lightweight, serverless relational database built into Python's standard library. It ensures the audit trail persists across app restarts without requiring heavy infrastructure (e.g. PostgreSQL, Redis, or Kafka) in an academic or interview setting.
+- Integration with real-time transaction data streams.
+- Evaluation using the complete original Kaggle dataset.
+- Independent validation and testing on larger datasets.
+- Advanced anomaly detection techniques.
+- Improved model explainability using SHAP.
+- Role-based authentication and access control.
+- Cloud deployment and scalable database integration.
+- Automated monitoring of model drift.
+
+## Project Objective
+
+The primary objective of this project is to demonstrate how machine learning can be applied to financial transaction classification through an interactive application that combines prediction, model evaluation, transaction monitoring, dataset management, and persistent record keeping.
+
+## Author
+
+**Vrutik Sotha**
+
+Computer Science and Engineering
+
