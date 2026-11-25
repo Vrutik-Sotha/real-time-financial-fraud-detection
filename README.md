@@ -162,7 +162,7 @@ Real-Time Financial Fraud Detection System/
 ### Step 1: Clone the repository
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/real-time-financial-fraud-detection.git
+git clone https://github.com/Vrutik-Sotha/real-time-financial-fraud-detection.git
 ```
 
 ### Step 2: Navigate to the project directory

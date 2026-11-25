@@ -94,7 +94,7 @@ FINTECH_CSS = """
         background: linear-gradient(135deg, #0a192f 0%, #172a45 100%);
         padding: 24px 28px;
         border-radius: 12px;
-        color: #ffffff;
+        color: yellow;
         margin-bottom: 24px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -128,6 +128,7 @@ FINTECH_CSS = """
 
     /* Metric Cards */
     div[data-testid="stMetric"] {
+        
         background-color: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 10px;
@@ -154,6 +155,7 @@ FINTECH_CSS = """
 
     /* Alert and Card containers */
     .fintech-card {
+        
         background-color: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
@@ -186,7 +188,7 @@ FINTECH_CSS = """
         border-radius: 8px;
         padding: 14px 18px;
         font-size: 0.9rem;
-        color: #334155;
+        color: black;
         margin-bottom: 16px;
     }
 
@@ -222,6 +224,73 @@ FINTECH_CSS = """
     .stButton>button[kind="primary"]:hover {
         background: linear-gradient(135deg, #023e8a 0%, #0096c7 100%);
         box-shadow: 0 4px 12px rgba(0, 180, 216, 0.35);
+    }
+</style>
+<style>
+    /* Premium FinTech overrides */
+    html, body, [class*="css"] {
+        background-color: #0B1220 !important;
+        color: #F1F5F9 !important;
+    }
+    .brand-header {
+        background: linear-gradient(135deg, #0B1220 0%, #111C2E 100%) !important;
+        color: #F1F5F9 !important;
+    }
+    .brand-badge {
+        background: rgba(20, 184, 166, 0.2) !important;
+        color: #14B8A6 !important;
+    }
+    div[data-testid="stMetric"] {
+        background-color: #17243A !important;
+        border: 1px solid #263449 !important;
+        color: #F1F5F9 !important;
+    }
+    div[data-testid="stMetricLabel"] {
+        color: #94A3B8 !important;
+    }
+    div[data-testid="stMetricValue"] {
+        color: #F1F5F9 !important;
+    }
+    .fintech-card {
+        background-color: #17243A !important;
+        border: 1px solid #263449 !important;
+        color: #F1F5F9 !important;
+    }
+    .info-callout {
+        background-color: #0f172a !important;
+        border: 1px solid #263449 !important;
+        border-left: 4px solid #14B8A6 !important;
+        color: #F1F5F9 !important;
+    }
+    .stTabs [data-baseweb="tab-list"] {
+        border-bottom: 2px solid #263449 !important;
+    }
+    .stTabs button[data-baseweb="tab"] {
+        color: #94A3B8 !important;
+    }
+    .stTabs button[data-baseweb="tab"][aria-selected="true"] {
+        color: #14B8A6 !important;
+        border-bottom: 2px solid #14B8A6 !important;
+    }
+    button[data-baseweb="button"] {
+        background-color: #14B8A6 !important;
+        color: #0B1220 !important;
+    }
+    button[data-baseweb="button"]:hover {
+        background-color: #0F9D8F !important;
+    }
+    button[data-baseweb="button"][aria-label*="secondary"] {
+        background-color: #38BDF8 !important;
+        color: #0B1220 !important;
+    }
+    input, textarea, select {
+        background-color: #111C2E !important;
+        color: #F1F5F9 !important;
+        border: 1px solid #263449 !important;
+    }
+    .stDataFrame, .stTable {
+        background-color: #111C2E !important;
+        color: #F1F5F9 !important;
     }
 </style>
 """

@@ -14,11 +14,77 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, roc_curve, precision_recall_curve, auc
 import numpy as np
+
+# FinTech dark theme styling helper
+def apply_fintech_style(fig, ax=None):
+    """Apply the premium FinTech dark theme to Matplotlib figures.
+    Adjusts background colors, text colors, grid, and spines to match the
+    navy/teal palette defined in the Streamlit config.
+    """
+    # Figure background
+    fig.patch.set_facecolor('#0B1220')  # main background
+    # Axes styling
+    if ax is None:
+        axes = fig.get_axes()
+    else:
+        axes = [ax]
+    for a in axes:
+        a.set_facecolor('#111C2E')  # secondary background
+        # Tick parameters
+        a.tick_params(colors='#F1F5F9', labelsize=10)
+        # Axis label colors
+        a.xaxis.label.set_color('#F1F5F9')
+        a.yaxis.label.set_color('#F1F5F9')
+        # Title color
+        a.title.set_color('#F1F5F9')
+        # Grid style
+        a.grid(True, color='#4B5563', linewidth=0.5, alpha=0.4)
+        # Spines color
+        for spine in a.spines.values():
+            spine.set_color('#4B5563')
+    # Legend styling if present
+    if fig.legends:
+        for leg in fig.legends:
+            leg.get_frame().set_facecolor('#17243A')
+            leg.get_frame().set_edgecolor('#4B5563')
+            for text in leg.get_texts():
+                text.set_color('#F1F5F9')
+
+    return fig
 import pandas as pd
 
 
 def plot_class_distribution(legit_count, fraud_count):
-    """Creates a donut/pie chart displaying Legitimate vs. Fraudulent transactions."""
+    """Creates a donut chart displaying Legitimate vs. Fraudulent transactions.
+    Shows total count in the center.
+    """
+    total = legit_count + fraud_count
+    fig, ax = plt.subplots(figsize=(6, 5))
+    labels = ['Legitimate', 'Fraudulent']
+    counts = [legit_count, fraud_count]
+    colors = ['#16A34A', '#DC2626']  # green for legit, red for fraud
+
+    wedges, texts, autotexts = ax.pie(
+        counts,
+        labels=labels,
+        autopct='%1.1f%%',
+        startangle=140,
+        colors=colors,
+        explode=(0, 0.08),
+        textprops=dict(color='#F1F5F9', fontsize=11, weight='bold')
+    )
+    # Draw donut hole
+    centre_circle = plt.Circle((0,0),0.55,fc='#111C2E')
+    ax.add_artist(centre_circle)
+    # Center text with total count
+    ax.text(0, 0, f"{total}\nTxns", ha='center', va='center', color='#F1F5F9', fontsize=14, weight='bold')
+    ax.set_title('Transaction Class Distribution', fontsize=14, weight='bold', pad=15, color='#F1F5F9')
+    plt.tight_layout()
+    apply_fintech_style(fig, ax)
+    return fig
+
+
+
     fig, ax = plt.subplots(figsize=(6, 5))
     labels = ['Legitimate (0)', 'Fraudulent (1)']
     counts = [legit_count, fraud_count]
@@ -36,10 +102,34 @@ def plot_class_distribution(legit_count, fraud_count):
 
     ax.set_title('Transaction Class Distribution', fontsize=14, weight='bold', pad=15)
     plt.tight_layout()
+
     return fig
 
 
+
 def plot_confusion_matrix(y_true, y_pred, model_title="Model Confusion Matrix"):
+    """Plots a Confusion Matrix heatmap with professional styling."""
+    cm = confusion_matrix(y_true, y_pred)
+    fig, ax = plt.subplots(figsize=(5.5, 4.2))
+    
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt='d',
+        cmap='Reds',
+        cbar=False,
+        xticklabels=['Pred Legit', 'Pred Fraud'],
+        yticklabels=['Actual Legit', 'Actual Fraud'],
+        annot_kws={"size": 13, "weight": "bold", "color": "#F1F5F9"},
+        ax=ax
+    )
+    
+    ax.set_title(model_title, fontsize=12, weight='bold', pad=12, color='#F1F5F9')
+    ax.set_ylabel('True Label', fontsize=11, weight='bold', color='#F1F5F9')
+    ax.set_xlabel('Predicted Label', fontsize=11, weight='bold', color='#F1F5F9')
+    plt.tight_layout()
+    apply_fintech_style(fig, ax)
+    return fig
     """Plots a Confusion Matrix heatmap."""
     cm = confusion_matrix(y_true, y_pred)
     fig, ax = plt.subplots(figsize=(5.5, 4.2))
@@ -60,6 +150,7 @@ def plot_confusion_matrix(y_true, y_pred, model_title="Model Confusion Matrix"):
     ax.set_ylabel('True Label', fontsize=11, weight='bold')
     ax.set_xlabel('Predicted Label', fontsize=11, weight='bold')
     plt.tight_layout()
+
     return fig
 
 
@@ -80,6 +171,7 @@ def plot_roc_curve(y_true, y_probs, model_name="Best Model"):
     ax.legend(loc="lower right", fontsize=10)
     ax.grid(alpha=0.3)
     plt.tight_layout()
+
     return fig
 
 
@@ -102,6 +194,7 @@ def plot_precision_recall_curve(y_true, y_probs, model_name="Best Model"):
     ax.legend(loc="lower left", fontsize=10)
     ax.grid(alpha=0.3)
     plt.tight_layout()
+
     return fig
 
 
@@ -141,6 +234,7 @@ def plot_model_comparison(comparison_results):
     ax.legend(loc='lower right', fontsize=10)
     ax.grid(axis='y', linestyle='--', alpha=0.3)
     plt.tight_layout()
+
     return fig
 
 
@@ -177,6 +271,7 @@ def plot_monitoring_summary(legit_count, fraud_count, low_count, med_count, high
         ax2.text(bar.get_x() + bar.get_width() / 2.0, yval + 0.05, f'{int(yval)}', ha='center', va='bottom', fontsize=10, weight='bold')
 
     plt.tight_layout()
+
     return fig
 
 
@@ -185,7 +280,8 @@ def plot_probability_distribution(probs_list):
     fig, ax = plt.subplots(figsize=(6, 3.8))
     if not probs_list:
         ax.text(0.5, 0.5, "No probability data yet", ha="center", va="center", fontsize=11, color="gray")
-        return fig
+    
+    return fig
 
     sns.histplot(probs_list, bins=15, kde=True, color='#8e44ad', ax=ax)
     ax.set_title('Fraud Probability Distribution (Audit History)', fontsize=12, weight='bold', pad=10)
@@ -194,6 +290,7 @@ def plot_probability_distribution(probs_list):
     ax.set_xlim(0, 1.0)
     ax.grid(alpha=0.3)
     plt.tight_layout()
+
     return fig
 
 
@@ -202,7 +299,8 @@ def plot_transactions_over_time(history_df):
     fig, ax = plt.subplots(figsize=(6.5, 3.8))
     if history_df.empty or "Prediction" not in history_df.columns:
         ax.text(0.5, 0.5, "No transaction history recorded yet", ha="center", va="center", fontsize=11, color="gray")
-        return fig
+    
+    return fig
 
     df_rev = history_df.iloc[::-1].copy().reset_index(drop=True)
     legit_cum = (df_rev["Prediction"] == "LEGITIMATE").cumsum()
@@ -218,6 +316,7 @@ def plot_transactions_over_time(history_df):
     ax.legend(loc="upper left", fontsize=9)
     ax.grid(alpha=0.3)
     plt.tight_layout()
+
     return fig
 
 
@@ -228,7 +327,8 @@ def plot_source_breakdown(source_dict):
     counts = [v for k, v in source_dict.items() if v > 0]
     if not counts:
         ax.text(0.5, 0.5, "No ingestion source data yet", ha="center", va="center", fontsize=11, color="gray")
-        return fig
+    
+    return fig
 
     colors = ['#3498db', '#9b59b6', '#1abc9c'][:len(counts)]
     ax.pie(
@@ -241,4 +341,5 @@ def plot_source_breakdown(source_dict):
     )
     ax.set_title('Transactions by Ingestion Source', fontsize=11, weight='bold', pad=10)
     plt.tight_layout()
+
     return fig
